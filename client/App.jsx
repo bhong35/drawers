@@ -10,8 +10,8 @@ import ProductAvailability from './Components/ProductAvailability.jsx';
 const axios = require('axios');
 import ReviewFormModal from './Components/ReviewFormModal.jsx';
 
-const baseURL = 'http://drawersreviews-env.bz3ikgcjmi.us-east-2.elasticbeanstalk.com/';
-// const baseURL = 'localhost:3020';
+// const baseURL = 'http://drawersreviews-env.bz3ikgcjmi.us-east-2.elasticbeanstalk.com/';
+// const baseURL = 'localhost:3333';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -113,7 +113,7 @@ export default class App extends React.Component {
     });
   }
 
-  submitNewReviewClickHandler(id) {
+  submitNewReviewClickHandler() {
     this.setState({
       showModal: false
     });

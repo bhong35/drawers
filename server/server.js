@@ -1,26 +1,107 @@
-let express = require('express');
-let app = express();
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const db = require('../db/mysql/db.js');
+const pg = require ('../db/pg/db-pg.js');
+const faker = require('faker');
+const helper = require('../data/helper');
 
-let cors = require('cors');
+// db.connection.connect(() => console.log('connected to db'));
 
 app.use(cors());
-
-let db = require('../database/db.js');
-const port = 3020;
-
-db.connection.connect(() => console.log('connected to db'));
-
 app.use(express.json());
-
 app.use(express.static(__dirname + '/../dist'));
-
 app.use('/bundle', express.static(__dirname + '/../dist/bundle.js'));
-
 app.use('/css', express.static(__dirname + '/../dist/stylesheet.css'));
 
+// ! PostgreSQL
+
+app.get('/pg/item/:id', (req, res) => {
+    let itemId = req.query.itemId;
+    return pg.retrieveItem(itemId)
+    .then(result => {
+        res.status(200).send(result)
+    })
+    .catch(error => {
+        res.status(404).send(error);
+    })
+});
+
+app.get('/pg/reviews/:id', (req, res) => {
+    let itemId = req.query.itemId;
+    return pg.retrieveReviews(itemId)
+    .then(result => {
+        res.status(200).send(result)
+    })
+    .catch(error => {
+        res.status(404).send(error);
+    })
+});
+
+// add entry to items table
+app.post('/pg/items', (req, res) => {
+    let box = helper.fakerNumber();
+    let description = helper.fakerSentence();
+    let size = helper.fakerNumber();
+    let instructions = helper.fakerSentence();
+    let environment = helper.fakerSentence();
+    let package = helper.fakerSentence();
+    console.log("log1!!");
+    return pg.addItem(box, description, size, instructions, environment, package)
+    .then((status, body) => {
+        res.status(status).send(body);
+    })
+    .catch(error => {
+        res.send(error);
+    });
+});
+
+// add entry to items table
+app.post('/pg/reviews', (req, res) => {
+    let productId = helper.fakerNumber();
+    let username = helper.fakerUserName();
+    let postedDate = helper.fakerDate();
+    let reviewTitle = helper.fakerWord();
+    let reviewText = helper.fakerParagraph();
+    let overallRating = helper.fakerRating();
+    let valueForMoney = helper.fakerNumber();
+    let productQuality = helper.fakerNumber();
+    let productAppearance = helper.fakerNumber();
+    let easeOfAssembly = helper.fakerNumber();
+    let worksAsExpected = helper.fakerNumber();
+    let helpfulYes = helper.fakerNumber();
+    let helpfulNo = helper.fakerNumber();
+    let recommended = helper.fakerNumber();
+    console.log("log2!!");
+    return pg.addReview(
+        productId, 
+        username, 
+        postedDate, 
+        reviewTitle, 
+        reviewText, 
+        overallRating, 
+        valueForMoney,
+        productQuality,
+        productAppearance,
+        easeOfAssembly,
+        worksAsExpected,
+        helpfulYes,
+        helpfulNo,
+        recommended)
+    .then((status, body) => {
+        res.status(status).send(body);
+    })
+    .catch(error => {
+        res.send(error);
+    });
+});
+
+// ! MongoDB
+
+// ! MySQL Original Server
 app.get('/item', (req, res) => {
   let itemId = req.query.itemId;
-  db.retrieveItem(itemId, function(error, result) {
+  db.retrieveItem(itemId, (error, result) => {
     if (error) {
       res.status(404).end();
     } else {
@@ -31,7 +112,7 @@ app.get('/item', (req, res) => {
 
 app.get('/reviews', (req, res) => {
   let itemId = req.query.itemId;
-  db.retrieveReviews(itemId, function(error, result) {
+  db.retrieveReviews(itemId, (error, result) => {
     if (error) {
       res.status(404).send(error);
     } else {
@@ -41,10 +122,7 @@ app.get('/reviews', (req, res) => {
 });
 
 app.put('/reviews', (req, res) => {
-  db.updateHelpfulReviews(req.body.reviewId, req.body.yesAdd, req.body.noAdd, function(
-    error,
-    result
-  ) {
+  db.updateHelpfulReviews(req.body.reviewId, req.body.yesAdd, req.body.noAdd, (error, result) => {
     if (error) {
       res.status(400).end();
     } else {
@@ -67,8 +145,7 @@ app.post('/reviews', (req, res) => {
     req.body.easeOfAssembly,
     req.body.worksAsExpected,
     req.body.recommended,
-    currentDate,
-    function(error, result) {
+    currentDate, (error, result) => {
       if (error) {
         console.log(error);
         res.status(400).end();
@@ -79,16 +156,15 @@ app.post('/reviews', (req, res) => {
   );
 });
 
-app.listen(port, () => console.log(`listening on port ${port}`));
+app.delete('/delete', (req, res) => {
+    res.send("hit route delete");
+})
 
 let getCurrentDate = () => {
   let currentDate = new Date();
   let year = currentDate.getFullYear();
-  console.log(year);
   let month = currentDate.getMonth();
-  console.log(month + 1);
   let date = currentDate.getDate();
-  console.log(date);
   let output = year + '';
   if (month === 12) {
     month = 1;
@@ -109,3 +185,6 @@ let getCurrentDate = () => {
   }
   return output;
 };
+
+const port = 3333;
+app.listen(port, () => console.log(`listening on port ${port}`));
