@@ -1,3 +1,5 @@
+// * PostgreSQL db connection and queries
+
 const { Pool, Client} = require('pg');
 const config = require('../config');
 
@@ -24,7 +26,6 @@ const addItem = (box, description, size, instructions, environment, package) => 
             }
         });
     })
-    // .then(pool.end());
 };
 
 const addReview = (
@@ -80,7 +81,6 @@ const addReview = (
             }
         });
     })
-    // .then(pool.end());
 };
 
 const retrieveItem = (itemId) => {
@@ -102,39 +102,3 @@ const retrieveReviews = (itemId => {
 });
 
 module.exports = { addItem, addReview, retrieveItem, retrieveReviews };
-
-// const client = new Client({
-//     user: 'postgres',
-//     host: 'localhost',
-//     database: 'test1',
-//     password: 'password',
-//     port: 5432
-// });
-
-// client.connect(()=> {
-//     console.log("connected CLIENT!");
-// });
-
-// const query = {
-//     text: 'INSERT INTO reviews () VALUES ()',
-//     values: [],
-// }
-
-// // seed db
-// const seed = () => {
-//     return new Promise((resolve, reject) => {
-//         client.query(query, (error, result) => {
-//             if (error) {
-//                 reject(error);
-//             } else {
-//                 resolve(result);
-//             }
-//         });
-//     })
-// }
-
-// module.exports = { seed };
-
-// const res = await client.query('SELECT $1:: text as message', ['Hello World']);
-// console.log(res.rows[0].message); // Hello World
-// await client.end();

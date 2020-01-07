@@ -1,3 +1,5 @@
+// * Write files for seeding dbs with 10 million random entries in MongoDB and PostgreSQL
+
 const fs = require('fs');
 const path = require('path');
 const helper = require ('./helper.js');
@@ -48,13 +50,19 @@ stream.once('open', (fd) => {
 });
 
 // ! writeFile
-// let itemsHeader = helper.itemsHeaders() + '\n';
-// for (let i = start; i <= end; i++) {
-//     itemsHeader += `${i}, ${helper.fakerNumber()}, ${helper.fakerParagraph()}, ${helper.fakerNumber()}, ${helper.fakerParagraph()}, ${helper.fakerSentence()}, ${helper.fakerParagraph()}\n`;
-// }
+let itemsHeader = helper.itemsHeaders() + '\n';
+for (let i = start; i <= end; i++) {
+    itemsHeader += `${i}, 
+    ${helper.fakerNumber()}, 
+    ${helper.fakerParagraph()}, 
+    ${helper.fakerNumber()}, 
+    ${helper.fakerParagraph()}, 
+    ${helper.fakerSentence()}, 
+    ${helper.fakerParagraph()}\n`;
+}
 
-// fs.writeFile(itemsFile, itemsHeader, (error) => {
-//     if(error) {
-//         console.log(error);
-//     }
-// });
+fs.writeFile(itemsFile, itemsHeader, (error) => {
+    if(error) {
+        console.log(error);
+    }
+});

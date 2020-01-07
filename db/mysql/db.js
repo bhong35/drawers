@@ -1,3 +1,5 @@
+// * Original MySQL db connection and queries
+
 let mysql = require('mysql');
 let sqlPassword = require('../config');
 

@@ -1,3 +1,5 @@
+// * Helper functions for seeding dbs with 10 million random entries in MongoDB and PostgreSQL
+
 const faker = require('faker');
 
 // ! items table

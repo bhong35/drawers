@@ -1,4 +1,7 @@
 config.js
 node_modules
+# For seeding items table with 10 million entries in Mongo and Postgres
 items
+# For seeding reviews table with 10 million entries in Mongo and Postgres
 reviews
+newrelic_agent.log

@@ -1,11 +1,12 @@
+const newrelic = require('newrelic');
 const express = require('express');
 const app = express();
 const cors = require('cors');
 const db = require('../db/mysql/db.js');
 const pg = require ('../db/pg/db-pg.js');
-const faker = require('faker');
 const helper = require('../data/helper');
 
+// * connection string for original MySQL DB
 // db.connection.connect(() => console.log('connected to db'));
 
 app.use(cors());
@@ -14,21 +15,35 @@ app.use(express.static(__dirname + '/../dist'));
 app.use('/bundle', express.static(__dirname + '/../dist/bundle.js'));
 app.use('/css', express.static(__dirname + '/../dist/stylesheet.css'));
 
-// ! PostgreSQL
+// ! ----- PostgreSQL -----
 
-app.get('/pg/item/:id', (req, res) => {
-    let itemId = req.query.itemId;
+app.get('/pg/item', (req, res) => {
+    let itemId = Math.floor(Math.random() * 9000000);
     return pg.retrieveItem(itemId)
     .then(result => {
-        res.status(200).send(result)
+        res.send(result)
+        // res.status(200).send(result)
     })
     .catch(error => {
-        res.status(404).send(error);
+        res.send(error)
+        // res.status(404).send(error);
     })
 });
 
-app.get('/pg/reviews/:id', (req, res) => {
-    let itemId = req.query.itemId;
+// app.get('/pg/item/:id', (req, res) => {
+//     let itemId = req.query.itemId;
+//     return pg.retrieveItem(itemId)
+//     .then(result => {
+//         res.status(200).send(result)
+//     })
+//     .catch(error => {
+//         res.status(404).send(error);
+//     })
+// });
+
+// * generates random product ID to test performance throughout depth of db
+app.get('/pg/reviews', (req, res) => {
+    let itemId = Math.floor(Math.random() * 10000000);
     return pg.retrieveReviews(itemId)
     .then(result => {
         res.status(200).send(result)
@@ -38,7 +53,7 @@ app.get('/pg/reviews/:id', (req, res) => {
     })
 });
 
-// add entry to items table
+// * add random entries into items table using faker generator
 app.post('/pg/items', (req, res) => {
     let box = helper.fakerNumber();
     let description = helper.fakerSentence();
@@ -56,7 +71,7 @@ app.post('/pg/items', (req, res) => {
     });
 });
 
-// add entry to items table
+// * add random entries into reviews table using faker generator
 app.post('/pg/reviews', (req, res) => {
     let productId = helper.fakerNumber();
     let username = helper.fakerUserName();
@@ -96,9 +111,7 @@ app.post('/pg/reviews', (req, res) => {
     });
 });
 
-// ! MongoDB
-
-// ! MySQL Original Server
+// ! ----- MySQL Original Server -----
 app.get('/item', (req, res) => {
   let itemId = req.query.itemId;
   db.retrieveItem(itemId, (error, result) => {

@@ -1,0 +1,15 @@
+# load-testing configs with artillery
+
+config:
+  target: 'http://localhost:3333'
+  phases:
+    - duration: 10
+    # rps
+      arrivalRate: 10000
+  defaults:
+    headers:
+      x-my-service-auth: '987401838271002188298567'
+scenarios:
+  - flow:
+    - get:
+        url: "/getItem"
